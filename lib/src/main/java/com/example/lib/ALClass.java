@@ -228,6 +228,30 @@ public class ALClass {
     }
 
     /**
+     * 公共链表首节点
+     */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        int count = 0;
+        ListNode l1 = headA;
+        ListNode l2 = headB;
+        while (l1 != l2) {
+            l1 = l1.next;
+            l2 = l2.next;
+            if (l1 == null) {
+                count++;
+                l1 = headB;
+            }
+            if (l2 == null) {
+                count++;
+                l2 = headA;
+            }
+            if (count > 2) return null;//两轮未找到
+        }
+        return l1;
+    }
+
+    /**
      * 二叉树最大深度
      */
     public int maxDepth(TreeNode root) {
@@ -261,6 +285,24 @@ public class ALClass {
         else if (s == null || t == null) return false;
         else if (s.val != t.val) return false;
         return isSameTree(s.left, t.left) && isSameTree(s.right, t.right);
+    }
+
+    /**
+     * 树子结构
+     */
+    public boolean isSubStructure(TreeNode node1, TreeNode node2) {
+        if (node2 == null || node1 == null) return false;
+        if (!isSub(node1, node2))
+            return isSubStructure(node1.left, node2) || isSubStructure(node1.right, node2);
+        return true;
+    }
+
+    public boolean isSub(TreeNode node1, TreeNode node2) {
+        if (node2 == null) return true;
+        if (node1 == null) return false;
+        if (node1.val == node2.val)
+            return isSub(node1.left, node2.left) && isSub(node1.right, node2.right);
+        else return false;
     }
 
     /**
@@ -325,16 +367,14 @@ public class ALClass {
      * 爬台阶(1-2递归，动归)
      */
 //    public int climbStairs(int n) {
-//        if (n == 1) {
-//            return 1;
-//        }
-//        int[] dp = new int[n + 1];
-//        dp[1] = 1;
-//        dp[2] = 2;
-//        for (int i = 3; i <= n; i++) {
+//        if (n == 1) return 1;
+//        int[] dp = new int[n];
+//        dp[0] = 1;
+//        dp[1] = 2;
+//        for (int i = 2; i <= n; i++) {
 //            dp[i] = dp[i - 1] + dp[i - 2];
 //        }
-//        return dp[n];
+//        return dp[n-1];
 //    }
     public int climbStairs(int n) {
         int memo[] = new int[n];
@@ -478,6 +518,40 @@ public class ALClass {
     }
 
     /**
+     * 数组奇数放偶数前
+     */
+    public int[] exchange(int[] nums) {
+        int start = 0, end = nums.length - 1;
+        while (start < end) {
+            while (start < end && nums[start] % 2 == 1) start++;
+            while (start < end && nums[end] % 2 == 0) end--;
+            if (start < end) {
+                int temp = nums[end];
+                nums[end] = nums[start];
+                nums[start] = temp;
+            }
+        }
+        return nums;
+    }
+
+    /**
+     * 数组奇数放偶数前（保证序列）
+     */
+    public void reOrderArray(int[] array) {
+        int i = 0;
+        for (int j = 0; j < array.length; j++) {
+            if (array[j] % 2 == 1) {
+                int tmp = array[j];
+//                for (int k = j - 1; k >= i; k--) {
+//                    array[k + 1] = array[k];
+//                }
+                if (j - i >= 0) System.arraycopy(array, i, array, i + 1, j - i);
+                array[i++] = tmp;
+            }
+        }
+    }
+
+    /**
      * 回文数
      */
     public boolean isPalindrome(int x) {
@@ -609,17 +683,17 @@ public class ALClass {
      */
     public int minNumberInRotateArray(int[] array) {
         if (array.length == 0) return 0;
-        int left = 0;
-        int right = array.length - 1;
+        int start = 0;
+        int end = array.length - 1;
         int mid = 0;
-        while (left < right) {
-            if (array[left] < array[right]) return array[left];//特殊
-            mid = (left + right) / 2;
-            if (array[mid] > array[left]) left = mid + 1;
-            else if (array[mid] < array[right]) right = mid;
-            else left++;
+        while (start < end) {
+            if (array[start] < array[end]) return array[start];//特殊
+            mid = (start + end) / 2;
+            if (array[mid] > array[start]) start = mid + 1;
+            else if (array[mid] < array[end]) end = mid;
+            else start++;
         }
-        return array[left];
+        return array[start];
     }
 
     /**

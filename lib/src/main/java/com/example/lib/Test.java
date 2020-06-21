@@ -30,6 +30,8 @@ public class Test {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        new ALClass().removeElement(new int[]{3,2,2,3},3);
+//        new ALClass().maxProfit(new int[]{7,1,5,3,6,4});
 //        final Looper looper = Looper.myLooper();
 //        try {
 //            System.out.println("0:"+Thread.currentThread());

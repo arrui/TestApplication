@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class ALClass {
-    public class TreeNode {
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -20,7 +22,7 @@ public class ALClass {
         }
     }
 
-    public class ListNode {
+    public static class ListNode {
         int val;
         ListNode next;
 
@@ -272,7 +274,7 @@ public class ALClass {
     }
 
     /**
-     * 子树
+     * 二叉树子树
      */
     public boolean isSubtree(TreeNode s, TreeNode t) {
         if (t == null) return true;
@@ -288,7 +290,7 @@ public class ALClass {
     }
 
     /**
-     * 树子结构
+     * 二叉树子结构
      */
     public boolean isSubStructure(TreeNode node1, TreeNode node2) {
         if (node2 == null || node1 == null) return false;
@@ -306,7 +308,7 @@ public class ALClass {
     }
 
     /**
-     * 树镜像
+     * 二叉树镜像
      */
     public TreeNode mirrorTree(TreeNode node) {
         if (node == null) return null;
@@ -665,6 +667,18 @@ public class ALClass {
     }
 
     /**
+     * 超过一半的数(比排序除2优)
+     */
+    public int majorityElement(int[] nums) {
+        int x = 0, votes = 0;
+        for (int num : nums) {
+            if (votes == 0) x = num;
+            votes += num == x ? 1 : -1;
+        }
+        return x;
+    }
+
+    /**
      * 旋转数组
      */
     public void rotate(int[] nums, int k) {
@@ -763,5 +777,300 @@ public class ALClass {
         public boolean empty() {
             return q1.size() /*+ q2.size()*/ == 0;
         }
+    }
+
+
+    /**
+     * 股票买卖最佳时期
+     */
+    public int maxProfit(int[] prices) {
+        if (prices.length == 0) return 0;
+        //Map<Integer,Integer> map = new HashMap();
+        int buy = prices[0];
+        int reword = 0;
+        //map.put(buy,0);
+        for (int i = 1; i < prices.length; i++) {
+            int price = prices[i];
+            //if (price > buy) {
+            //if (map.get(buy) < price - buy) map.put(buy,price - buy);
+            if (price - buy > reword) {
+                reword = price - buy;
+            } else if (price < buy) {
+                buy = price;
+                //map.put(buy,0);
+            }
+        }
+        //int reword = 0;
+        //for (Map.Entry<Integer,Integer> entry:map.entrySet()){
+        //    if (reword < entry.getValue()) reword = entry.getValue();
+        //}
+        return reword;
+    }
+
+    /**
+     * 股票买卖最佳时期(多区间)
+     */
+    public int maxProfit1(int[] prices) {
+        if (prices.length == 0) return 0;
+        int reword = 0;
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] > prices[i - 1]) {//前后比较，计算所有的上升阶段值
+                reword += prices[i] - prices[i - 1];
+            }
+        }
+        return reword;
+    }
+
+    /**
+     * 字符串的排列
+     */
+    List<String> res = new LinkedList<>();
+    char[] sa;
+
+    public String[] permutation(String s) {
+        sa = s.toCharArray();
+        cal(0);
+        return res.toArray(new String[res.size()]);
+        // return new ArrayList<String>(res);
+    }
+
+    private void cal(int x) {
+        if (x + 1 == sa.length) {
+            res.add(String.valueOf(sa));
+            return;
+        }
+        HashSet<Character> set = new HashSet<>();
+        for (int i = x; i < sa.length; i++) {
+            if (set.contains(sa[i])) continue; // 重复，因此剪枝
+            set.add(sa[i]);
+            swap(i, x); // 交换，将 sa[i] 固定在第 x 位
+            cal(x + 1); // 开启固定第 x + 1 位字符
+            swap(i, x); // 恢复交换
+        }
+    }
+
+    private void swap(int a, int b) {
+        char tmp = sa[a];
+        sa[a] = sa[b];
+        sa[b] = tmp;
+    }
+
+    /**
+     * 移除元素
+     */
+    public int removeElement(int[] nums, int val) {
+        if (nums.length == 0) return 0;
+        int start = 0, end = nums.length;
+        while (start < end) {
+            if (nums[start] != val) {
+                start++;
+            } else {
+                nums[start] = nums[end - 1];
+                end--;
+            }
+        }
+        return end;
+    }
+
+    /**
+     * 合并二叉树
+     */
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if (t1 == null && t2 == null) return null;
+        if (t1 == null) return t2;
+        if (t2 == null) return t1;
+        t1.val += t2.val;
+        t1.left = mergeTrees(t1.left, t2.left);
+        t1.right = mergeTrees(t1.right, t2.right);
+        return t1;
+    }
+
+    /**
+     * 从上往下打印二叉树，同层左到右
+     */
+    public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<Integer> list = new ArrayList();
+        if (root == null) return list;
+        LinkedList<TreeNode> queue = new LinkedList();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            list.add(node.val);
+            if (node.left != null) queue.add(node.left);
+            if (node.right != null) queue.add(node.right);
+        }
+        return list;
+    }
+
+    /**
+     * 对称二叉树（递归）
+     */
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) return true;
+        return check(root, root);
+    }
+
+    private boolean check(TreeNode left, TreeNode right) {
+        if (left == null && right == null) return true;
+        if (left == null || right == null || left.val != right.val) return false;
+        return check(left.left, right.right) && check(left.right, right.left);
+    }
+
+    /**
+     * 迭代
+     */
+    private boolean check2(TreeNode left, TreeNode right) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(left);
+        queue.add(right);
+        while (!queue.isEmpty()) {
+            TreeNode t1 = queue.poll();
+            TreeNode t2 = queue.poll();
+            if (t1 == null && t2 == null) continue;
+            if (t1 == null || t2 == null || t1.val != t2.val) return false;//唯一不对称情况
+            queue.add(t1.left);
+            queue.add(t2.right);
+            queue.add(t1.right);
+            queue.add(t2.left);
+        }
+        return true;
+    }
+
+    /**
+     * 二叉树第k大节点
+     */
+    int n = 0;
+    int des = 0;
+
+    public int kthLargest(TreeNode root, int k) {
+        if (k == 0) return 0;
+        n = k;
+        dfs(root);
+        return des;
+    }
+
+    private void dfs(TreeNode node) {
+        if (node == null || n == 0) return;
+        dfs(node.right);
+        if (--n == 0) {
+            des = node.val;
+            return;
+        }
+        dfs(node.left);
+    }
+
+    /**
+     * 重新构建二叉树
+     */
+    //利用原理,先序遍历的第一个节点就是根。在中序遍历中通过根 区分哪些是左子树的，哪些是右子树的
+    //左右子树，递归
+    HashMap<Integer, Integer> map = new HashMap<>();//标记中序遍历
+    int[] preorder;//保留的先序遍历
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        this.preorder = preorder;
+        for (int i = 0; i < preorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        return recursive(0, 0, inorder.length - 1);
+    }
+
+    /**
+     * @param pre_root_idx 先序遍历的索引
+     * @param in_left_idx  中序遍历的索引
+     * @param in_right_idx 中序遍历的索引
+     */
+    public TreeNode recursive(int pre_root_idx, int in_left_idx, int in_right_idx) {
+        //相等就是自己
+        if (in_left_idx > in_right_idx) {
+            return null;
+        }
+        //root_idx是在先序里面的
+        TreeNode root = new TreeNode(preorder[pre_root_idx]);
+        // 有了先序的,再根据先序的，在中序中获 当前根的索引
+        int idx = map.get(preorder[pre_root_idx]);
+
+        //左子树的根节点就是 左子树的(前序遍历）第一个，就是+1,左边边界就是left，右边边界是中间区分的idx-1
+        root.left = recursive(pre_root_idx + 1, in_left_idx, idx - 1);
+
+        //由根节点在中序遍历的idx 区分成2段,idx 就是根
+
+        //右子树的根，就是右子树（前序遍历）的第一个,就是当前根节点 加上左子树的数量
+        // pre_root_idx 当前的根  左子树的长度 = 左子树的左边-右边 (idx-1 - in_left_idx +1) 。最后+1就是右子树的根了
+        root.right = recursive(pre_root_idx + (idx - 1 - in_left_idx + 1) + 1, idx + 1, in_right_idx);
+        return root;
+    }
+
+    /**
+     * 矩形覆盖（动归）
+     */
+    public int RectCover(int target) {
+        if (target == 0 || target == 1 || target == 2) return target;
+        int a = 1, b = 2, c = 0;
+        for (int i = 3; i <= target; i++) {
+            c = a + b;
+            a = b;
+            b = c;
+        }
+        return c;
+    }
+
+    /**
+     * 打印回型矩阵
+     */
+    public ArrayList<Integer> printMatrix(int[][] matrix) {
+        if (matrix.length == 0) return null;
+        int l = 0, r = matrix[0].length - 1, t = 0, b = matrix.length - 1;
+        //int[] ret = new int[matrix.length*matrix[0].length];
+        //int c = 0;
+        ArrayList<Integer> list = new ArrayList();
+        while (true) {
+            for (int i = l; i <= r; i++) {// left to right.
+                list.add(matrix[t][i]);
+            }
+            if (++t > b) break;
+            for (int i = t; i <= b; i++) {// top to bottom.
+                list.add(matrix[i][r]);
+            }
+            if (l > --r) break;
+            for (int i = r; i >= l; i--) {// right to left.
+                list.add(matrix[b][i]);
+            }
+            if (t > --b) break;
+            for (int i = b; i >= t; i--) {// bottom to top.
+                list.add(matrix[i][l]);
+            }
+            if (++l > r) break;
+        }
+        return list;
+    }
+
+    /**
+     * 两两交换链表
+     */
+    public ListNode swapParis(ListNode head) {
+        /*声明一个哑节点*/
+        ListNode dumb = new ListNode(0);
+        /*哑节点的下一个节点指向头节点*/
+        dumb.next = head;
+        /*声明一个引用指向哑节点*/
+        ListNode temp = dumb;
+        /*如果哑节点的下一个节点和下下一个节点不为空继续转换*/
+        while (dumb.next != null && dumb.next.next != null) {
+            /*要转换的第一个节点（称为curr）*/
+            ListNode curr = dumb.next;
+            /*要转换的第二个节点（称为next）*/
+            ListNode next = dumb.next.next;
+            /*指定curr的下一个是next的下一个*/
+            curr.next = next.next;
+            /*指定next的下一个是curr*/
+            next.next = curr;
+            /*指定哑节点的下一个是next*/
+            dumb.next = next;
+            /*哑节点引用指向哑节点的下下一个节点*/
+            dumb = dumb.next.next;
+        }
+        /*返回哑节点的没改变引用的下一个节点*/
+        return temp.next;
     }
 }

@@ -1073,4 +1073,44 @@ public class ALClass {
         /*返回哑节点的没改变引用的下一个节点*/
         return temp.next;
     }
+
+    /**
+     * strStr
+     */
+    public int strStr(String str1, String str2) {
+        int l = str2.length(), n = str1.length();
+        for (int start = 0; start < n - l + 1; ++start) {
+            if (str1.substring(start, start + l).equals(str2)) {
+                return start;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * strStr优化
+     */
+    public int strStr1(String haystack, String needle) {
+        int l = needle.length(), n = haystack.length();
+        if (l == 0) return 0;
+        int pn = 0;
+        while (pn < n - l + 1) {
+            //找到第一个与needle匹配的字符
+            while (pn < n - l + 1 && haystack.charAt(pn) != needle.charAt(0)) ++pn;
+
+            //最大匹配子串
+            int currLen = 0, pL = 0;
+            while (pL < l && pn < n && haystack.charAt(pn) == needle.charAt(pL)) {
+                ++pn;
+                ++pL;
+                ++currLen;
+            }
+            //找到即返回
+            if (currLen == l) return pn - l;
+
+            //未找到，回溯
+            pn = pn - currLen + 1;
+        }
+        return -1;
+    }
 }

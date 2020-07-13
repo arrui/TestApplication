@@ -1,0 +1,12 @@
+*.iml
+.gradle
+/local.properties
+.idea/*
+.idea
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+tools/third_party/licences.pyc
+/tools/third_party/licences.pyc

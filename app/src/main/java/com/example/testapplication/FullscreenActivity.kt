@@ -1,5 +1,6 @@
 package com.example.testapplication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -8,6 +9,7 @@ import android.view.Choreographer
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.lib.LogUtil
 import kotlinx.android.synthetic.main.activity_fullscreen.*
 import java.util.*
 import java.util.concurrent.CountDownLatch
@@ -52,9 +54,39 @@ class FullscreenActivity : AppCompatActivity() {
         false
     }
 
+    override fun onStart() {
+        super.onStart()
+        LogUtil.log()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LogUtil.log()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LogUtil.log()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LogUtil.log()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LogUtil.log()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        LogUtil.log()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        LogUtil.log()
         setContentView(R.layout.activity_fullscreen)
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -66,7 +98,11 @@ class FullscreenActivity : AppCompatActivity() {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-//        dummy_button.setOnTouchListener(mDelayHideTouchListener)
+        dummy_button.setOnTouchListener { v, event ->
+            startActivity(Intent(baseContext,TestActivity::class.java))
+
+            return@setOnTouchListener true
+        }
 //        TestLock()
 //        Choreographer.getInstance().postFrameCallback {  }
         val list = ArrayList<String>()

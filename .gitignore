@@ -1,6 +1,5 @@
-/captures
-/obj
 /.idea
+!/.idea/gradle.xml
 .gradle
 /local.properties
 .DS_Store

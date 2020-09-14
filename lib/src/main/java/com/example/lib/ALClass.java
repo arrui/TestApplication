@@ -366,19 +366,21 @@ public class ALClass {
     }
 
     /**
-     * 爬台阶(1-2递归，动归)
+     * 简单递归
+     * 时间复杂度：O(2^n)
+     * 空间复杂度：递归栈的空间
      */
-//    public int climbStairs(int n) {
-//        if (n == 1) return 1;
-//        int[] dp = new int[n];
-//        dp[0] = 1;
-//        dp[1] = 2;
-//        for (int i = 2; i <= n; i++) {
-//            dp[i] = dp[i - 1] + dp[i - 2];
-//        }
-//        return dp[n-1];
-//    }
-    public int climbStairs(int n) {
+    public int climbStairs0(int n) {
+        if (n == 0 || n == 1 || n == 2) return n;
+        return climbStairs0(n - 1) + climbStairs0(n - 2);
+    }
+
+    /**
+     * 优化递归
+     * 时间复杂度：O(n) 没有重复的计算
+     * 空间复杂度：O(n) 和递归栈的空间
+     */
+    public int climbStairs1(int n) {
         int memo[] = new int[n];
         return climb_Stairs(0, n, memo);
     }
@@ -390,18 +392,51 @@ public class ALClass {
         if (i == n) {
             return 1;
         }
-//        if (memo[i] > 0) {
-//            return memo[i];
-//        }
-//        memo[i] = climb_Stairs(i + 1, n, memo) + climb_Stairs(i + 2, n, memo);
-//        return memo[i];
-        return climb_Stairs(i + 1, n, memo) + climb_Stairs(i + 2, n, memo);
+        if (memo[i] > 0) {
+            return memo[i];
+        }
+        memo[i] = climb_Stairs(i + 1, n, memo) + climb_Stairs(i + 2, n, memo);
+        return memo[i];
+    }
+
+    /**
+     * 动态规划
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(n)
+     */
+    public int climbStairs2(int n) {
+        if (n == 1) return 1;
+        int[] dp = new int[n];
+        dp[0] = 1;
+        dp[1] = 2;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+        }
+        return dp[n - 1];
+    }
+
+    /**
+     * 优化的动态规划
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(1)
+     */
+    public int climbStairs3(int n) {
+        if (n == 0 || n == 1) return n;
+        int a = 1, b = 1, c = 0;
+        for (int i = 2; i <= n; ++i) {
+            c = a + b;
+            a = b;
+            b = c;
+        }
+        return c;
     }
 
     /**
      * 变态爬台阶(动归)
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(1)
      */
-    public int JumpFloorII(int target) {
+    public int climbStairsN(int target) {
         return target <= 0 ? 0 : 1 << (target - 1);
     }
 

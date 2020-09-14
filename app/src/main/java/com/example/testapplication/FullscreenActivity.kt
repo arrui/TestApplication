@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lib.LogUtil
 import kotlinx.android.synthetic.main.activity_fullscreen.*
+import java.net.NetworkInterface
 import java.util.*
 import java.util.concurrent.CountDownLatch
 
@@ -99,7 +100,7 @@ class FullscreenActivity : AppCompatActivity() {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         dummy_button.setOnTouchListener { v, event ->
-            startActivity(Intent(baseContext,TestActivity::class.java))
+            startActivity(Intent(baseContext, TestActivity::class.java))
 
             return@setOnTouchListener true
         }
@@ -113,6 +114,13 @@ class FullscreenActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context)
             adapter = MyAdapter(list)
         }
+        try {
+            LogUtil.log(NetworkInterface.getByName("wlan0").hardwareAddress.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
